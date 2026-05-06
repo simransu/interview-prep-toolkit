@@ -68,10 +68,8 @@ communication under pressure are weak.
 
 ## Token Note
 
-This playbook is long (~15,000 tokens of output). If you hit a context limit mid-generation:
+This playbook is long. If you hit a context limit mid-generation:
 
 1. Ask for one Part at a time ("Generate Part I: Foundations only")
 2. Chain the prompts with the previous output as context
 3. Use Sonnet for parts where the content is more formulaic (cheat sheets, quick reference) — save Opus for the conceptually dense sections
-
-The total cost for generating this full guide with Opus 4.6 is roughly $0.50–$1.50 depending on your exact prompt and input context. For a resource you'll use over multiple weeks of prep, that's good ROI.
