@@ -69,4 +69,4 @@ Practice cadence from the playbook's own study schedule: 2 framework drills/day 
 
 ---
 
-*Built with Claude (Anthropic). Primary model: Claude Opus 4.6 for generation, Claude Sonnet 4.6 for iteration. Updated regularly as prep continues.*
+*Built with Claude (Anthropic).*
