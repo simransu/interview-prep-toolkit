@@ -39,30 +39,38 @@ Every case is a full simulation — not just a prompt and a model answer:
 
 - **The prompt** — as it would land in a real interview
 - **Interviewer ↔ candidate dialogue** — the full back-and-forth, including follow-up questions and pivots
-- **What makes this answer strong** — annotated callouts on the key moves
 - **Difficulty tag** — Medium or Hard
-
-The goal is pattern recognition, not memorization. See enough strong answers and structuring becomes instinct.
 
 ---
 
-## How to Use It
+## How to Use It — The Right Way
 
-Don't read straight through. Practice.
+Case interviews are not about word-for-word answers. They are about **structured thinking under pressure**. If your answer diverges from what's written, that does not mean you were wrong. It means you have a different — and possibly equally valid — line of reasoning.
 
-1. Open the case. Read the prompt. Close the panel.
-2. Work through your own answer — out loud, timed (target 12 minutes).
-3. Open the full dialogue. Compare move by move.
-4. Note where you diverged and why.
-5. Come back to the same case in 48 hours without looking at your notes.
+The goal of reading a worked case is not to memorize the response. It is to **expand your perspective**: see how someone else decomposed the same problem, which hypotheses they prioritized, how they signposted their thinking, and how they handled follow-ups. That is where the real learning happens.
 
-Use the filter pills at the top to work by section or jump directly to a case from the sidebar.
+**Use this flow for every case:**
+
+**Step 1 — Attempt the case cold**
+Read the prompt. Close the panel. Work through your answer out loud or in writing. Target 12 minutes. Commit fully before you look at anything.
+
+**Step 2 — Read the dialogue, but pause at each interviewer follow-up**
+Before reading the candidate's response to each follow-up question, stop. Ask yourself: *how would I answer this?* Then read on. This trains you to handle pressure in real time — not just the opening structure, but the pivots, the probes, and the "what if the data showed X instead?" moments that catch most people off guard.
+
+**Step 3 — Compare, don't judge**
+When you read the candidate's response, compare your thinking move by move — not line by line. Ask: *did I decompose the problem? did I segment before concluding? did I make a recommendation and quantify it?* Structure is what you're grading yourself on, not the specific hypothesis you landed on.
+
+**Step 4 — Extract one thing**
+Every case should leave you with one concrete habit to carry forward. A phrase, a segmentation move, a way of handling a follow-up. Write it down. That compounding is what shifts your baseline over weeks.
+
+**Step 5 — Repeat in 48 hours**
+Come back to the same case without notes. If you can work through it cleanly the second time, you have internalized the pattern — not memorized the answer.
 
 ---
 
 ## Prompt
 
-The prompt used to generate these cases is in [`../01-case-study-playbook/prompts.md`](../01-case-study-playbook/prompts.md).
+The prompt used to generate these cases is in [`prompts.md`](./prompts.md).
 
 ---
 
