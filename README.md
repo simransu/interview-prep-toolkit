@@ -11,7 +11,7 @@ This isn't a polished corporate resource dump. It's the actual material I'm usin
 | Folder | Status | What It Is |
 |--------|--------|-----------|
 | [`01-case-study-playbook`](./01-case-study-playbook/) | ✅ Live | A complete, 56-page case study mastery guide — 7 archetypes, the SPADE framework, metric decomposition, A/B testing, causal inference, communication, 5 full worked cases, and a product library across 15+ verticals |
-| `02-case-interview-casebook` | 🔜 Coming | 40 case studies with full worked responses, organized by archetype |
+| [`02-case-interview-casebook`](./02-case-interview-casebook/) | ✅ Sections I & II Live | 40 interview simulations across 6 categories — full interviewer ↔ candidate dialogue, interactive HTML. Netflix, Uber, TikTok, Stripe, Meta, Google, Airbnb, Spotify and more. Sections III–VI dropping over the next 2 weeks. |
 | `03-interview-simulator` | 🔜 Coming | A React-based conversational case interview simulator |
 | `04-ds-coursework` | 🔜 Coming | Deep-dive coursework modules: statistics, ML, experimentation, SQL |
 | `05-resume-tools` | 🔜 Coming | Resume and cover letter optimizer for DS, DA, BA, and PA roles |
@@ -47,9 +47,10 @@ Practice cadence from the playbook's own study schedule: 2 framework drills/day 
 
 **Completed**
 - [x] Case Study Mastery Guide (Parts I–X) — foundations, metric diagnosis, product sense, A/B testing, growth strategy, technical depth, communication, 5 full worked cases, product library across 15+ verticals, edge cases
+- [x] Case Interview Casebook — Sections I (Metric Diagnosis) & II (Product & Metrics Design), 17 cases live
 
 **In Progress**
-- [ ] 40-case casebook with full worked responses (organized by archetype)
+- [ ] Casebook Sections III–VI (A/B Testing, Growth, Root Cause Analysis, Data Modeling & ML)
 - [ ] React interview simulator (conversational, with follow-up logic)
 
 **Planned**

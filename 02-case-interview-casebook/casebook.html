@@ -1,0 +1,1563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Case Study Casebook — Data Science & Analytics Interview Simulations</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&family=Inter:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #F8F9FC;
+    --bg2: #FFFFFF;
+    --bg3: #EEF0F6;
+    --panel: #FFFFFF;
+    --border: rgba(99,102,241,0.18);
+    --border2: rgba(0,0,0,0.08);
+    --indigo: #4F52C9;
+    --indigo-glow: rgba(99,102,241,0.10);
+    --cyan: #0891B2;
+    --emerald: #059669;
+    --amber: #D97706;
+    --rose: #DC2626;
+    --text: #0F172A;
+    --muted: #64748B;
+    --muted2: #475569;
+    --sidebar-w: 300px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* TOP BAR */
+  .topbar {
+    height: 58px;
+    background: #FFFFFF;
+    border-bottom: 1px solid var(--border2);
+    display: flex;
+    align-items: center;
+    padding: 0 24px;
+    gap: 16px;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 100;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  }
+  .topbar-logo {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 800;
+    font-size: 16px;
+    letter-spacing: -0.02em;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .topbar-logo span {
+    color: var(--indigo);
+  }
+  .logo-badge {
+    background: linear-gradient(135deg, var(--indigo), #818CF8);
+    width: 28px; height: 28px;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px;
+  }
+  .topbar-pills {
+    display: flex;
+    gap: 8px;
+    margin-left: auto;
+    align-items: center;
+  }
+  .tpill {
+    font-size: 11px;
+    font-weight: 500;
+    padding: 4px 10px;
+    border-radius: 20px;
+    border: 1px solid var(--border2);
+    color: var(--muted2);
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: 'Inter', sans-serif;
+  }
+  .tpill:hover, .tpill.active {
+    border-color: var(--indigo);
+    color: var(--indigo);
+    background: var(--indigo-glow);
+  }
+  .topbar-count {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--muted);
+    margin-left: 8px;
+  }
+
+  /* SECTION FILTER PILLS */
+  .section-filters {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 0 16px;
+    height: 42px;
+    background: #FFFFFF;
+    border-bottom: 1px solid var(--border2);
+    flex-shrink: 0;
+    overflow-x: auto;
+    scrollbar-width: none;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+  }
+  .section-filters::-webkit-scrollbar { display: none; }
+  .sfpill {
+    white-space: nowrap;
+    font-size: 11px;
+    font-weight: 500;
+    padding: 4px 12px;
+    border-radius: 20px;
+    border: 1px solid var(--border2);
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: 'Inter', sans-serif;
+  }
+  .sfpill:hover { color: var(--text); border-color: rgba(255,255,255,0.2); }
+  .sfpill.cs-pill {
+    opacity: 0.45;
+    cursor: not-allowed;
+    font-style: italic;
+  }
+  .sfpill.cs-pill:hover {
+    color: var(--muted);
+    border-color: var(--border2);
+    background: none;
+  }
+  .sfpill.active {
+    background: var(--indigo);
+    border-color: var(--indigo);
+    color: #fff;
+  }
+
+  /* MAIN LAYOUT */
+  .layout {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+  }
+
+  /* SIDEBAR */
+  .sidebar {
+    width: var(--sidebar-w);
+    background: #FAFBFF;
+    border-right: 1px solid var(--border2);
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    overflow: hidden;
+  }
+  .sidebar-search {
+    padding: 12px;
+    border-bottom: 1px solid var(--border2);
+  }
+  .sidebar-search input {
+    width: 100%;
+    background: var(--bg3);
+    border: 1px solid var(--border2);
+    border-radius: 8px;
+    padding: 8px 12px 8px 32px;
+    color: var(--text);
+    font-size: 13px;
+    font-family: 'Inter', sans-serif;
+    outline: none;
+    transition: border-color 0.2s;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2394A3B8' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: 10px center;
+  }
+  .sidebar-search input:focus { border-color: var(--indigo); }
+  .sidebar-search input::placeholder { color: var(--muted); }
+
+  .sidebar-list {
+    overflow-y: auto;
+    flex: 1;
+    padding: 8px;
+    scrollbar-width: thin;
+    scrollbar-color: var(--bg3) transparent;
+  }
+  .sidebar-list::-webkit-scrollbar { width: 4px; }
+  .sidebar-list::-webkit-scrollbar-track { background: transparent; }
+  .sidebar-list::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 4px; }
+
+  .section-header {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    font-weight: 500;
+    color: var(--indigo);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 12px 8px 6px;
+    position: sticky;
+    top: 0;
+    background: #FAFBFF;
+    z-index: 1;
+  }
+
+  .case-item {
+    padding: 9px 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.15s;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 2px;
+  }
+  .case-item:hover { background: var(--bg3); }
+  .case-item.active {
+    background: rgba(79,82,201,0.08);
+    border: 1px solid rgba(79,82,201,0.25);
+  }
+  .case-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    flex-shrink: 0;
+    width: 22px;
+    padding-top: 1px;
+  }
+  .case-item.active .case-num { color: var(--indigo); }
+  .case-meta { flex: 1; min-width: 0; }
+  .case-title {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text);
+    line-height: 1.35;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .case-sub {
+    font-size: 10px;
+    color: var(--muted);
+    margin-top: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .diff-badge {
+    flex-shrink: 0;
+    font-size: 9px;
+    font-weight: 600;
+    padding: 2px 6px;
+    border-radius: 4px;
+    letter-spacing: 0.04em;
+    margin-top: 1px;
+  }
+  .diff-medium { background: rgba(217,119,6,0.10); color: #92400E; border: 1px solid rgba(217,119,6,0.2); }
+  .diff-hard { background: rgba(220,38,38,0.08); color: #991B1B; border: 1px solid rgba(220,38,38,0.18); }
+  .diff-easy { background: rgba(5,150,105,0.08); color: #065F46; border: 1px solid rgba(5,150,105,0.18); }
+
+  /* CONTENT PANEL */
+  .content {
+    flex: 1;
+    overflow-y: auto;
+    background: var(--bg);
+    scrollbar-width: thin;
+    scrollbar-color: var(--bg3) transparent;
+  }
+  .content::-webkit-scrollbar { width: 6px; }
+  .content::-webkit-scrollbar-track { background: transparent; }
+  .content::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 4px; }
+
+  /* WELCOME SCREEN */
+  .welcome {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    text-align: center;
+    padding: 48px;
+    gap: 24px;
+  }
+  .welcome-icon {
+    font-size: 56px;
+    line-height: 1;
+  }
+  .welcome h1 {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 800;
+    font-size: 32px;
+    letter-spacing: -0.03em;
+    line-height: 1.15;
+    background: linear-gradient(135deg, #1E1B4B 0%, #4F52C9 55%, #0891B2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .welcome p {
+    font-size: 15px;
+    color: var(--muted2);
+    max-width: 480px;
+    line-height: 1.7;
+  }
+  .welcome-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    max-width: 480px;
+    width: 100%;
+  }
+  .wcard {
+    background: #fff;
+    border: 1px solid var(--border2);
+    border-radius: 10px;
+    padding: 16px;
+    text-align: center;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  }
+  .wcard-num {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--indigo);
+  }
+  .wcard-label { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+  /* CASE VIEW */
+  .case-view {
+    display: none;
+    padding: 36px 48px;
+    max-width: 860px;
+    margin: 0 auto;
+    animation: fadeIn 0.3s ease;
+  }
+  .case-view.visible { display: block; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+  .case-header {
+    margin-bottom: 28px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--border2);
+  }
+  .case-header-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 12px;
+  }
+  .case-number-big {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--indigo);
+    letter-spacing: 0.1em;
+    margin-bottom: 8px;
+  }
+  .case-title-big {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 700;
+    font-size: 26px;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+    color: var(--text);
+  }
+  .case-badges {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 12px;
+    align-items: center;
+  }
+  .badge {
+    font-size: 11px;
+    font-weight: 500;
+    padding: 4px 10px;
+    border-radius: 6px;
+    border: 1px solid var(--border2);
+    color: var(--muted2);
+  }
+  .badge.company {
+    background: rgba(79,82,201,0.08);
+    border-color: rgba(79,82,201,0.25);
+    color: #3730A3;
+    font-weight: 600;
+  }
+  .badge.key-lesson {
+    background: rgba(8,145,178,0.07);
+    border-color: rgba(8,145,178,0.2);
+    color: #0E7490;
+    font-size: 11px;
+    font-style: italic;
+  }
+
+  /* DIALOGUE */
+  .dialogue { display: flex; flex-direction: column; gap: 0; }
+
+  .turn {
+    display: flex;
+    gap: 14px;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--border2);
+  }
+  .turn:last-child { border-bottom: none; }
+
+  .turn-role {
+    flex-shrink: 0;
+    width: 90px;
+    text-align: right;
+    padding-top: 1px;
+  }
+  .role-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 4px;
+    display: inline-block;
+  }
+  .role-interviewer { background: rgba(100,116,139,0.10); color: #475569; }
+  .role-candidate { background: rgba(79,82,201,0.10); color: #3730A3; }
+
+  .turn-body {
+    flex: 1;
+    font-size: 14px;
+    line-height: 1.75;
+    color: var(--muted);
+  }
+  .turn-body.candidate { color: var(--text); }
+
+  /* DEBRIEF */
+  .debrief {
+    margin-top: 28px;
+    background: linear-gradient(135deg, rgba(79,82,201,0.06) 0%, rgba(8,145,178,0.04) 100%);
+    border: 1px solid rgba(79,82,201,0.2);
+    border-radius: 12px;
+    padding: 24px;
+  }
+  .debrief-title {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--indigo);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .debrief-title::before {
+    content: '';
+    display: block;
+    width: 6px; height: 6px;
+    background: var(--indigo);
+    border-radius: 50%;
+  }
+  .debrief p {
+    font-size: 13.5px;
+    line-height: 1.75;
+    color: var(--muted2);
+    margin-bottom: 10px;
+  }
+  .debrief p:last-child { margin-bottom: 0; }
+  .debrief strong { color: var(--text); font-weight: 600; }
+
+  .skills-list {
+    margin-top: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .skill-item {
+    display: flex;
+    gap: 10px;
+    font-size: 13px;
+    color: var(--muted2);
+    line-height: 1.5;
+  }
+  .skill-item::before {
+    content: '→';
+    color: var(--cyan);
+    flex-shrink: 0;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .case-nav-credit {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--indigo);
+    text-decoration: none;
+    padding: 6px 12px;
+    border-radius: 20px;
+    background: var(--indigo-glow);
+    border: 1px solid rgba(79,82,201,0.2);
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .case-nav-credit:hover {
+    background: rgba(79,82,201,0.15);
+    border-color: rgba(79,82,201,0.35);
+  }
+
+  /* NAV ARROWS */
+  .case-nav {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 32px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border2);
+  }
+  .nav-btn {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--muted2);
+    cursor: pointer;
+    padding: 8px 14px;
+    border: 1px solid var(--border2);
+    border-radius: 8px;
+    transition: all 0.2s;
+    font-family: 'Inter', sans-serif;
+    background: none;
+  }
+  .nav-btn:hover {
+    border-color: var(--indigo);
+    color: var(--indigo);
+    background: var(--indigo-glow);
+  }
+  .nav-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+  .nav-btn:disabled:hover {
+    border-color: var(--border2);
+    color: var(--muted2);
+    background: none;
+  }
+
+  /* COMING SOON SECTIONS */
+  .coming-soon-group {
+    margin: 6px 8px 10px;
+    border: 1px dashed rgba(79,82,201,0.2);
+    border-radius: 10px;
+    overflow: hidden;
+    background: rgba(248,249,252,0.7);
+  }
+  .cs-header {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 10px 12px;
+    background: rgba(79,82,201,0.04);
+    border-bottom: 1px dashed rgba(79,82,201,0.15);
+  }
+  .cs-lock { font-size: 13px; flex-shrink: 0; }
+  .cs-title {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--muted2);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+  }
+  .cs-sub {
+    font-size: 9.5px;
+    color: var(--muted);
+    margin-top: 1px;
+  }
+  .cs-badge {
+    margin-left: auto;
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    padding: 3px 8px;
+    border-radius: 20px;
+    background: rgba(79,82,201,0.1);
+    color: var(--indigo);
+    border: 1px solid rgba(79,82,201,0.2);
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .cs-preview {
+    padding: 8px 12px 10px;
+  }
+  .cs-row {
+    font-size: 11px;
+    color: var(--muted);
+    padding: 3px 0;
+    border-bottom: 1px solid rgba(0,0,0,0.04);
+    font-family: 'Inter', sans-serif;
+  }
+  .cs-row:last-child { border-bottom: none; }
+  .cs-fade { opacity: 0.5; font-style: italic; }
+
+  /* Hidden items for filtering */
+  .case-item.hidden, .section-group.hidden { display: none; }
+
+  /* SIDEBAR FOOTER */
+  .sidebar-footer {
+    padding: 12px;
+    border-top: 1px solid var(--border2);
+    background: #FAFBFF;
+    flex-shrink: 0;
+  }
+  .follow-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    background: linear-gradient(135deg, #EEF2FF 0%, #E0F2FE 100%);
+    border: 1px solid rgba(79,82,201,0.2);
+    border-radius: 10px;
+    text-decoration: none;
+    transition: all 0.2s;
+    margin-bottom: 8px;
+  }
+  .follow-btn:hover {
+    background: linear-gradient(135deg, #E0E7FF 0%, #BAE6FD 100%);
+    border-color: rgba(79,82,201,0.35);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(79,82,201,0.12);
+  }
+  .follow-icon {
+    width: 28px; height: 28px;
+    background: #0A66C2;
+    border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    color: white;
+    font-size: 13px;
+    font-weight: 700;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    flex-shrink: 0;
+  }
+  .follow-text { flex: 1; }
+  .follow-name {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+  }
+  .follow-sub {
+    display: block;
+    font-size: 10px;
+    color: var(--muted);
+    margin-top: 1px;
+  }
+  .follow-arrow {
+    font-size: 13px;
+    color: var(--indigo);
+    flex-shrink: 0;
+  }
+  .credit-line {
+    font-size: 10px;
+    color: var(--muted);
+    text-align: center;
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: 0.02em;
+  }
+
+  /* WELCOME ATTRIBUTION */
+  .welcome-follow {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 18px;
+    background: linear-gradient(135deg, #EEF2FF 0%, #E0F2FE 100%);
+    border: 1px solid rgba(79,82,201,0.2);
+    border-radius: 12px;
+    text-decoration: none;
+    transition: all 0.2s;
+    max-width: 360px;
+    width: 100%;
+  }
+  .welcome-follow:hover {
+    background: linear-gradient(135deg, #E0E7FF 0%, #BAE6FD 100%);
+    border-color: rgba(79,82,201,0.35);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(79,82,201,0.12);
+  }
+  .wf-avatar {
+    width: 36px; height: 36px;
+    background: linear-gradient(135deg, #4F52C9, #0891B2);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    color: white;
+    font-size: 15px;
+    font-weight: 700;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    flex-shrink: 0;
+  }
+  .wf-text { flex: 1; }
+  .wf-name {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+  }
+  .wf-action {
+    font-size: 11px;
+    color: var(--indigo);
+    margin-top: 2px;
+    font-weight: 500;
+  }
+  .welcome-credit {
+    font-size: 11px;
+    color: var(--muted);
+    font-family: 'JetBrains Mono', monospace;
+    text-align: center;
+    letter-spacing: 0.02em;
+  }
+
+  /* Highlight for search */
+  mark {
+    background: rgba(99,102,241,0.3);
+    color: var(--text);
+    border-radius: 2px;
+    padding: 0 1px;
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    :root { --sidebar-w: 240px; }
+    .case-view { padding: 24px 20px; }
+    .case-title-big { font-size: 20px; }
+    .welcome { padding: 24px; }
+    .welcome h1 { font-size: 22px; }
+    .welcome-grid { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="topbar-logo">
+    <div class="logo-badge">📊</div>
+    The Case Study <span>Casebook</span>
+  </div>
+  <span class="topbar-count">17 Cases Live · 23 Coming Soon</span>
+  <div class="topbar-pills">
+    <span class="tpill active" onclick="filterDiff('all', this)">All</span>
+    <span class="tpill" onclick="filterDiff('medium', this)">⚡ Medium</span>
+    <span class="tpill" onclick="filterDiff('hard', this)">🔥 Hard</span>
+  </div>
+</div>
+
+<!-- SECTION FILTERS -->
+<div class="section-filters">
+  <span class="sfpill active" onclick="filterSection('all', this)">All Active</span>
+  <span class="sfpill" onclick="filterSection('metric', this)">I · Metric Diagnosis</span>
+  <span class="sfpill" onclick="filterSection('product', this)">II · Product &amp; Metrics Design</span>
+  <span class="sfpill cs-pill">🔒 III · A/B Testing</span>
+  <span class="sfpill cs-pill">🔒 IV · Growth &amp; Strategy</span>
+  <span class="sfpill cs-pill">🔒 V · Root Cause</span>
+  <span class="sfpill cs-pill">🔒 VI · Technical / ML</span>
+</div>
+
+<!-- LAYOUT -->
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sidebar-search">
+      <input type="text" id="searchInput" placeholder="Search cases…" oninput="doSearch(this.value)">
+    </div>
+    <div class="sidebar-list" id="sidebarList">
+
+      <div class="section-group" data-section="metric">
+        <div class="section-header">I · Metric Diagnosis</div>
+        <div class="case-item" data-case="1" data-diff="medium" data-section="metric" onclick="showCase(1)">
+          <span class="case-num">01</span>
+          <div class="case-meta">
+            <div class="case-title">Netflix DAU Drop</div>
+            <div class="case-sub">Netflix · Data Quality</div>
+          </div>
+          <span class="diff-badge diff-medium">Med</span>
+        </div>
+        <div class="case-item" data-case="2" data-diff="hard" data-section="metric" onclick="showCase(2)">
+          <span class="case-num">02</span>
+          <div class="case-meta">
+            <div class="case-title">Uber Revenue Decline</div>
+            <div class="case-sub">Uber · Simpson's Paradox</div>
+          </div>
+          <span class="diff-badge diff-hard">Hard</span>
+        </div>
+        <div class="case-item" data-case="3" data-diff="hard" data-section="metric" onclick="showCase(3)">
+          <span class="case-num">03</span>
+          <div class="case-meta">
+            <div class="case-title">TikTok Engagement Spike</div>
+            <div class="case-sub">TikTok · Bot Detection</div>
+          </div>
+          <span class="diff-badge diff-hard">Hard</span>
+        </div>
+        <div class="case-item" data-case="4" data-diff="medium" data-section="metric" onclick="showCase(4)">
+          <span class="case-num">04</span>
+          <div class="case-meta">
+            <div class="case-title">Slack Activation Mystery</div>
+            <div class="case-sub">Slack · Definition Change</div>
+          </div>
+          <span class="diff-badge diff-medium">Med</span>
+        </div>
+        <div class="case-item" data-case="5" data-diff="medium" data-section="metric" onclick="showCase(5)">
+          <span class="case-num">05</span>
+          <div class="case-meta">
+            <div class="case-title">DoorDash Delivery Times</div>
+            <div class="case-sub">DoorDash · Marketplace</div>
+          </div>
+          <span class="diff-badge diff-medium">Med</span>
+        </div>
+        <div class="case-item" data-case="6" data-diff="hard" data-section="metric" onclick="showCase(6)">
+          <span class="case-num">06</span>
+          <div class="case-meta">
+            <div class="case-title">Google Ads CPC Decline</div>
+            <div class="case-sub">Google · Ad Auction Economics</div>
+          </div>
+          <span class="diff-badge diff-hard">Hard</span>
+        </div>
+        <div class="case-item" data-case="7" data-diff="medium" data-section="metric" onclick="showCase(7)">
+          <span class="case-num">07</span>
+          <div class="case-meta">
+            <div class="case-title">Spotify Premium Conversion</div>
+            <div class="case-sub">Spotify · Channel Quality</div>
+          </div>
+          <span class="diff-badge diff-medium">Med</span>
+        </div>
+        <div class="case-item" data-case="8" data-diff="medium" data-section="metric" onclick="showCase(8)">
+          <span class="case-num">08</span>
+          <div class="case-meta">
+            <div class="case-title">Airbnb Barcelona Drop</div>
+            <div class="case-sub">Airbnb · Regulation Impact</div>
+          </div>
+          <span class="diff-badge diff-medium">Med</span>
+        </div>
+        <div class="case-item" data-case="9" data-diff="medium" data-section="metric" onclick="showCase(9)">
+          <span class="case-num">09</span>
+          <div class="case-meta">
+            <div class="case-title">Amazon Add-to-Cart Anomaly</div>
+            <div class="case-sub">Amazon · Funnel Analysis</div>
+          </div>
+          <span class="diff-badge diff-medium">Med</span>
+        </div>
+        <div class="case-item" data-case="10" data-diff="hard" data-section="metric" onclick="showCase(10)">
+          <span class="case-num">10</span>
+          <div class="case-meta">
+            <div class="case-title">Stripe Error Rate &amp; Volume</div>
+            <div class="case-sub">Stripe · Correlated Metrics</div>
+          </div>
+          <span class="diff-badge diff-hard">Hard</span>
+        </div>
+      </div>
+
+      <div class="section-group" data-section="product">
+        <div class="section-header">II · Product &amp; Metrics Design</div>
+        <div class="case-item" data-case="11" data-diff="medium" data-section="product" onclick="showCase(11)">
+          <span class="case-num">11</span>
+          <div class="case-meta">
+            <div class="case-title">Instagram Reels Success</div>
+            <div class="case-sub">Meta · Cannibalization</div>
+          </div>
+          <span class="diff-badge diff-medium">Med</span>
+        </div>
+        <div class="case-item" data-case="12" data-diff="hard" data-section="product" onclick="showCase(12)">
+          <span class="case-num">12</span>
+          <div class="case-meta">
+            <div class="case-title">LinkedIn Short-Form Video</div>
+            <div class="case-sub">LinkedIn · Build vs Don't Build</div>
+          </div>
+          <span class="diff-badge diff-hard">Hard</span>
+        </div>
+        <div class="case-item" data-case="13" data-diff="hard" data-section="product" onclick="showCase(13)">
+          <span class="case-num">13</span>
+          <div class="case-meta">
+            <div class="case-title">Notion AI Success Metrics</div>
+            <div class="case-sub">Notion · AI Feature Design</div>
+          </div>
+          <span class="diff-badge diff-hard">Hard</span>
+        </div>
+        <div class="case-item" data-case="14" data-diff="medium" data-section="product" onclick="showCase(14)">
+          <span class="case-num">14</span>
+          <div class="case-meta">
+            <div class="case-title">YouTube Creator Features</div>
+            <div class="case-sub">YouTube · Prioritization</div>
+          </div>
+          <span class="diff-badge diff-medium">Med</span>
+        </div>
+        <div class="case-item" data-case="15" data-diff="medium" data-section="product" onclick="showCase(15)">
+          <span class="case-num">15</span>
+          <div class="case-meta">
+            <div class="case-title">Twitter Fleets Post-Mortem</div>
+            <div class="case-sub">Twitter · Feature Failure</div>
+          </div>
+          <span class="diff-badge diff-medium">Med</span>
+        </div>
+        <div class="case-item" data-case="16" data-diff="medium" data-section="product" onclick="showCase(16)">
+          <span class="case-num">16</span>
+          <div class="case-meta">
+            <div class="case-title">Uber Safety Metrics</div>
+            <div class="case-sub">Uber · Non-Engagement Goals</div>
+          </div>
+          <span class="diff-badge diff-medium">Med</span>
+        </div>
+        <div class="case-item" data-case="17" data-diff="hard" data-section="product" onclick="showCase(17)">
+          <span class="case-num">17</span>
+          <div class="case-meta">
+            <div class="case-title">Pinterest Native Checkout</div>
+            <div class="case-sub">Pinterest · Strategic Pivot</div>
+          </div>
+          <span class="diff-badge diff-hard">Hard</span>
+        </div>
+      </div>
+
+      <div class="coming-soon-group">
+        <div class="cs-header">
+          <span class="cs-lock">🔒</span>
+          <div>
+            <div class="cs-title">III · A/B Testing</div>
+            <div class="cs-sub">7 cases · Netflix, Uber, Duolingo, Amazon…</div>
+          </div>
+          <span class="cs-badge">Coming Soon</span>
+        </div>
+        <div class="cs-preview">
+          <div class="cs-row">Case 18 · Netflix Pricing Experiment</div>
+          <div class="cs-row">Case 19 · Meta Conflicting A/B Results</div>
+          <div class="cs-row">Case 20 · Uber Matching Algorithm</div>
+          <div class="cs-row cs-fade">+ 4 more cases…</div>
+        </div>
+      </div>
+
+      <div class="coming-soon-group">
+        <div class="cs-header">
+          <span class="cs-lock">🔒</span>
+          <div>
+            <div class="cs-title">IV · Growth &amp; Strategy</div>
+            <div class="cs-sub">6 cases · Duolingo, Spotify, Airbnb…</div>
+          </div>
+          <span class="cs-badge">Coming Soon</span>
+        </div>
+        <div class="cs-preview">
+          <div class="cs-row">Case 25 · Duolingo Japan Growth</div>
+          <div class="cs-row">Case 26 · Spotify Churn Reduction</div>
+          <div class="cs-row">Case 27 · Cold Start Marketplace</div>
+          <div class="cs-row cs-fade">+ 3 more cases…</div>
+        </div>
+      </div>
+
+      <div class="coming-soon-group">
+        <div class="cs-header">
+          <span class="cs-lock">🔒</span>
+          <div>
+            <div class="cs-title">V · Root Cause / Conflicting Metrics</div>
+            <div class="cs-sub">5 cases · Meta, Uber, SaaS…</div>
+          </div>
+          <span class="cs-badge">Coming Soon</span>
+        </div>
+        <div class="cs-preview">
+          <div class="cs-row">Case 31 · Meta Users Up, Revenue Down</div>
+          <div class="cs-row">Case 32 · NPS Up, Churn Up</div>
+          <div class="cs-row">Case 33 · Efficiency Up, Complaints Up</div>
+          <div class="cs-row cs-fade">+ 2 more cases…</div>
+        </div>
+      </div>
+
+      <div class="coming-soon-group">
+        <div class="cs-header">
+          <span class="cs-lock">🔒</span>
+          <div>
+            <div class="cs-title">VI · Technical / Data Modeling</div>
+            <div class="cs-sub">5 cases · Netflix, Stripe, ML Systems…</div>
+          </div>
+          <span class="cs-badge">Coming Soon</span>
+        </div>
+        <div class="cs-preview">
+          <div class="cs-row">Case 36 · Netflix Recommendation System</div>
+          <div class="cs-row">Case 37 · Stripe Fraud Detection</div>
+          <div class="cs-row">Case 38 · Causal Impact Retroactively</div>
+          <div class="cs-row cs-fade">+ 2 more cases…</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- SIDEBAR FOOTER -->
+    <div class="sidebar-footer">
+      <a href="https://www.linkedin.com/in/simran-sundrani/" target="_blank" class="follow-btn">
+        <span class="follow-icon">in</span>
+        <div class="follow-text">
+          <span class="follow-name">Follow Simran Sundrani</span>
+          <span class="follow-sub">for more resources like this</span>
+        </div>
+        <span class="follow-arrow">↗</span>
+      </a>
+      <div class="credit-line">Generated using Claude · refined by Simran</div>
+    </div>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="content" id="contentPanel">
+
+    <!-- WELCOME -->
+    <div class="welcome" id="welcomeScreen">
+      <div class="welcome-icon">📊</div>
+      <h1>40 Interview Simulations<br>for Data Science Mastery</h1>
+      <p>Read each case as if you're observing a real interview. Pay attention to <em>how</em> the candidate structures responses, when they pause to clarify, and how they handle follow-up pressure.</p>
+      <div class="welcome-grid">
+        <div class="wcard"><div class="wcard-num">17</div><div class="wcard-label">Live Cases</div></div>
+        <div class="wcard"><div class="wcard-num">2</div><div class="wcard-label">Sections Live</div></div>
+        <div class="wcard"><div class="wcard-num">+23</div><div class="wcard-label">Coming Soon</div></div>
+      </div>
+      <p style="font-size:13px; color: var(--muted);">← Select a case from the sidebar to begin</p>
+      <a href="https://www.linkedin.com/in/simran-sundrani/" target="_blank" class="welcome-follow">
+        <span class="wf-avatar">S</span>
+        <div class="wf-text">
+          <div class="wf-name">Simran Sundrani</div>
+          <div class="wf-action">Follow on LinkedIn for more resources →</div>
+        </div>
+      </a>
+      <div class="welcome-credit">Generated using Claude prompting · refined by Simran's instructions</div>
+    </div>
+
+    <!-- CASE VIEWS -->
+    <div id="caseContainer"></div>
+
+  </div>
+</div>
+
+<script>
+const cases = {
+  1: {
+    num: 1, section: "metric",
+    company: "Netflix", diff: "Medium",
+    title: "The Netflix DAU Drop That Wasn't Real",
+    lesson: "Always check data quality before diagnosing",
+    dialogue: [
+      {role:"Interviewer", text:"You're a data scientist on Netflix's core analytics team. You come in on Monday morning and see that DAU dropped 9% over the weekend compared to the previous weekend. The VP of Product just pinged your team asking what happened. Walk me through how you'd investigate."},
+      {role:"Candidate", text:"Before I dive into hypotheses, I want to make sure I understand the metric. When we say DAU, are we counting unique users who opened the Netflix app or unique users who actually streamed content? And is this 9% drop comparing Saturday-Sunday this week to Saturday-Sunday last week?"},
+      {role:"Interviewer", text:"DAU is defined as unique users who initiated at least one stream. And yes, it's this weekend versus the prior weekend."},
+      {role:"Candidate", text:"Got it. And one more — was there any scheduled maintenance, app release, or known infrastructure event over the weekend?"},
+      {role:"Interviewer", text:"Not that I'm aware of, but I'm not sure."},
+      {role:"Candidate", text:"That's actually the first thing I'd check, and here's why. Let me lay out my approach in three phases.\n\nPhase one is what I call the \"data sanity check.\" Before I assume this is a real user behavior change, I want to rule out data artifacts. Specifically, I'd check four things: Was there an ETL pipeline delay over the weekend that means we're looking at incomplete data? Did any logging or tracking change ship recently — maybe a new SDK version on mobile that changed how stream initiation is counted? Was there a CDN or infrastructure issue that might have prevented some streams from being logged even though users were watching? And finally, did we recently change the definition of what counts as \"initiated a stream\" — for example, did we change the minimum buffer threshold?\n\nPhase two, if the data checks out, is external factors. I'd look at whether there was a major competing event — a big sports event, a holiday in key markets, extreme weather keeping people outdoors.\n\nPhase three is internal diagnosis. If it's a real drop and not externally explained, I'd decompose DAU into its components: new users, retained users, resurrected users, and churned users. I'd segment by platform — iOS, Android, smart TV, web — by geography, and by user tenure.\n\nBut honestly, my gut says phase one is the most productive place to start. A 9% weekend-over-weekend drop in a product as mature as Netflix is unusually large for a behavioral change. That magnitude, appearing suddenly, is more consistent with a data issue."},
+      {role:"Interviewer", text:"Good instinct. Let's say you checked and found that the data pipeline for smart TV devices had a processing delay — about 30% of smart TV stream events from Saturday haven't been ingested yet. How would you quantify whether that explains the full drop?"},
+      {role:"Candidate", text:"Great, so I'd approach this quantitatively. First, I'd look at what percentage of total DAU typically comes from smart TV. Let's say historically, smart TV accounts for about 35% of Netflix DAU.\n\nIf 30% of smart TV events are missing, that means we're undercounting smart TV DAU by roughly 30%. So the impact on total DAU would be approximately 0.35 × 0.30 = 0.105, or about a 10.5% reduction in reported DAU.\n\nOur observed drop is 9%, which is actually slightly less than the 10.5% I'd expect from the pipeline issue alone. This could mean that underlying DAU actually increased slightly this weekend, but the pipeline delay is masking it.\n\nTo confirm, I'd check DAU for non-smart-TV platforms only. If iOS, Android, and web DAU are flat or slightly up compared to last weekend, that confirms the entire reported drop is explained by the pipeline delay."},
+      {role:"Interviewer", text:"Perfect. Now, the VP already sent a company-wide email saying \"DAU dropped 9%, we need to investigate urgently.\" How would you handle the communication aspect?"},
+      {role:"Candidate", text:"This is important. I'd move quickly on two fronts. First, I'd send a brief update to the VP and the broader thread within the hour saying something like: \"Initial investigation indicates this is likely a data ingestion delay for smart TV events, not a real user behavior change. Approximately 30% of smart TV stream events from Saturday are still processing. Non-smart-TV platforms show stable DAU. I'll confirm once the pipeline completes and send a final analysis.\"\n\nSecond, and this is the longer-term takeaway — I'd recommend we implement two things to prevent this kind of false alarm: an automated data completeness check that flags when any platform's event volume is significantly below expected levels before metrics are calculated, and a latency indicator on our dashboards that shows how fresh each data source is. That way, the VP would have seen a yellow warning on the dashboard instead of a clean 9% drop."},
+      {role:"Interviewer", text:"Good. One last question — let's say the pipeline issue explained only 5% of the 9% drop, leaving 4% unexplained. Where would you go next?"},
+      {role:"Candidate", text:"With the remaining 4% confirmed as real, I'd move to phases two and three. I'd first check for external events during that specific weekend — major competitor releases, sporting events, holidays in large markets. If nothing obvious there, I'd decompose the remaining drop by user segment. I'd look at retained users versus new users — did we acquire fewer new users that weekend, or did existing users not show up? I'd check by geography to see if the 4% is concentrated in one region. And I'd look at content engagement — was there a particularly strong content slate the prior weekend that created an unusually high baseline?\n\nThe key insight here is that the magnitude matters. A 4% weekend-over-weekend fluctuation in a mature product is within normal variance for many companies. I'd check the historical distribution of weekend-over-weekend DAU changes — if the standard deviation is 3-4%, then a 4% drop is a one-sigma event, which happens regularly and may not require urgent action."},
+    ],
+    debrief: {
+      pattern: "Always start with data quality. In real-world analytics, a surprising percentage of metric anomalies are caused by pipeline delays, logging changes, or definition shifts — not actual user behavior changes. The candidate who checks this first demonstrates real-world experience.",
+      skills: [
+        "Quantifying whether a technical issue fully explains the anomaly (the 0.35 × 0.30 calculation)",
+        "Communicating uncertainty to stakeholders quickly and clearly",
+        "Recommending systemic fixes, not just one-off diagnosis",
+        "Calibrating alarm — knowing when a fluctuation is within normal variance"
+      ]
+    }
+  },
+  2: {
+    num: 2, section: "metric",
+    company: "Uber", diff: "Hard",
+    title: "Uber's Revenue Decline — The Simpson's Paradox Trap",
+    lesson: "Aggregate metrics can be deeply misleading when composition changes",
+    dialogue: [
+      {role:"Interviewer", text:"You're on Uber's analytics team. Revenue per trip has declined 11% quarter-over-quarter globally. The CFO is concerned. Diagnose."},
+      {role:"Candidate", text:"Revenue per trip declining 11% is significant. Let me clarify a few things: is this revenue to Uber specifically — so after driver payouts — or is it gross booking value per trip? And is this across all Uber products — Rides, Eats, Freight — or just Rides?"},
+      {role:"Interviewer", text:"This is Uber's net revenue per trip for Rides only, after driver payouts. So the take-home for Uber per ride."},
+      {role:"Candidate", text:"Understood. So net revenue per trip is essentially Uber's take rate times the gross fare. I'd structure my investigation into three areas.\n\nFirst, pricing and fare changes. Did we change our pricing algorithm, reduce surge pricing frequency, lower base fares in any market, or increase driver incentives?\n\nSecond, trip mix shift. If the composition of trips changed — for example, if the share of shorter, cheaper trips grew relative to longer, more expensive trips — the average would decline even if pricing within each trip category held steady.\n\nThird, competitive dynamics. If a competitor like Lyft increased incentives or lowered prices in key markets, we may have responded with lower fares to retain market share.\n\nLet me start with the mix shift hypothesis because an 11% decline across all markets feels too large and uniform for a single pricing change."},
+      {role:"Interviewer", text:"That's a good instinct. Tell me more about how you'd investigate the mix shift."},
+      {role:"Candidate", text:"I'd segment revenue per trip by several dimensions and look at the within-segment trends versus the aggregate trend.\n\nFirst, by geography. Uber has been expanding aggressively into emerging markets — India, Southeast Asia, Latin America — where trip fares are significantly lower than in the US or Western Europe. If those markets grew as a share of total trips, they'd pull the global average down even if revenue per trip in every individual market was stable or improving.\n\nLet me do a rough calculation. If the US was 50% of trips at $4.50 and India was 15% at $1.20 last quarter, the weighted average would be heavily influenced by the US. If this quarter the US is 42% and India is 25%, the average gets pulled down significantly even though nothing changed within either market. This is a classic Simpson's Paradox."},
+      {role:"Interviewer", text:"You're right — the data shows that revenue per trip is actually up slightly in most individual markets. The decline is almost entirely a mix shift driven by rapid growth in three emerging markets. So now what? Is this a problem or not?"},
+      {role:"Candidate", text:"This is a crucial question, and the answer is: it depends on what you're optimizing for.\n\nIf the company is optimizing for revenue per trip, this looks like a problem. But that's actually the wrong metric to focus on in this context. Here's why.\n\nThe right question is: is total revenue growing? If we're adding millions of trips in India at $1.20 net revenue each, total revenue is increasing even though the per-trip average is declining. The company is getting bigger and more profitable in aggregate — the average just looks worse because of composition.\n\nI'd reframe the conversation with the CFO this way: \"Revenue per trip declined 11%, but this is entirely explained by our successful expansion in emerging markets. Total net revenue grew 18% quarter-over-quarter. Revenue per trip within each market is stable or improving. The declining average is actually a sign of healthy geographic diversification, not a pricing or margin problem.\"\n\nHowever, I would flag one legitimate concern: we need to ensure that the unit economics in these emerging markets are sustainable."},
+      {role:"Interviewer", text:"The CFO pushes back: \"I don't care about averages — our investors look at revenue per trip as a key efficiency metric. How do I tell them it dropped 11%?\""},
+      {role:"Candidate", text:"Fair concern. I'd recommend three things for the investor narrative.\n\nFirst, start reporting revenue per trip by market maturity tier — mature markets versus growth markets — so investors can see that mature market efficiency is improving.\n\nSecond, create a \"same-market\" revenue per trip metric — analogous to same-store sales in retail. This would show revenue per trip growth only in markets that existed in both periods, removing the dilution effect of new market launches.\n\nThird, if the emerging markets are on a clear trajectory toward higher revenue per trip as they mature, show that trajectory. Investors want to see that today's low-ARPU markets will become tomorrow's high-ARPU markets.\n\nThe underlying message is: we're investing in growth that temporarily dilutes our per-trip average, but the total profit pool is expanding and each new market is on a path to mature-market economics."},
+    ],
+    debrief: {
+      pattern: "Simpson's Paradox / mix shift. The aggregate metric declined while every individual segment improved. This is one of the most commonly tested concepts in analytics interviews because it separates candidates who think in segments from those who take aggregates at face value.",
+      skills: [
+        "Calculating weighted averages to prove a mix shift",
+        "Reframing a 'problem' as a healthy business outcome with the right context",
+        "Creating better metrics (same-market revenue per trip) that resist composition effects",
+        "Communicating to non-technical stakeholders (CFO, investors) without jargon"
+      ]
+    }
+  },
+  3: {
+    num: 3, section: "metric",
+    company: "TikTok", diff: "Hard",
+    title: "TikTok's Engagement Spike — When 'Good' Metrics Are Actually Bad",
+    lesson: "Always question positive metric movements too",
+    dialogue: [
+      {role:"Interviewer", text:"You're on TikTok's trust and safety analytics team. Video views per day spiked 35% in a specific market over the past week. The growth team is celebrating. You're suspicious. Why, and what would you investigate?"},
+      {role:"Candidate", text:"A 35% spike in one week in a single market is unusually large for organic growth. Healthy engagement growth is typically gradual — maybe 2-5% week-over-week. A 35% spike suggests something non-organic is happening. I'd investigate three hypotheses.\n\nFirst, bot or coordinated inauthentic activity. A sudden spike in views could indicate bot farms inflating view counts, either for monetary gain — boosting certain creators' content to sell promotion services — or for political or ideological manipulation.\n\nSecond, viral event. A genuinely viral piece of content or trend could drive a spike, but 35% across an entire market's view volume is extreme.\n\nThird, technical or measurement change. Maybe a tracking change started counting views differently."},
+      {role:"Interviewer", text:"How would you distinguish between bot activity and a genuine viral event using data?"},
+      {role:"Candidate", text:"I'd look at several signals that differentiate organic human behavior from inauthentic bot behavior.\n\nSignal one: User session patterns. Bots tend to have unnaturally uniform behavior — identical session durations, perfectly regular intervals between sessions, no variance in viewing patterns. I'd pull the distribution of session duration and inter-session intervals for users who contributed to the spike.\n\nSignal two: View completion and engagement patterns. Bots typically either watch videos to completion at unrealistically high rates or at unrealistically low rates. They also rarely engage in secondary actions — they don't comment, share, or follow in normal proportions. If the view-to-engagement ratio collapsed — far more views but no proportional increase in comments or shares — that's a strong bot signal.\n\nSignal three: Account age and profile characteristics. Bot accounts are often newly created, have minimal profile information, and show sudden bursts of activity.\n\nSignal four: Content concentration. If the spike is driven by views on a small number of specific accounts — rather than being broadly distributed — that suggests coordinated boosting.\n\nSignal five: Geographic and device fingerprinting. Bot farms often operate from concentrated IP ranges, use similar device types, and show location clustering."},
+      {role:"Interviewer", text:"You pull the data and find strong evidence of bot activity — about 60% of the incremental views came from accounts that are less than 7 days old, have no profile photos, and show very low comment-to-view ratios. What do you recommend?"},
+      {role:"Candidate", text:"I'd recommend actions on three time horizons.\n\nImmediate — this week: Flag the identified bot accounts and exclude their activity from metrics retroactively. Send a corrected metric report to the growth team with the adjusted numbers. Also investigate whether the bots inflated any specific creators' content.\n\nShort-term — this month: Improve our real-time bot detection pipeline. The signals I described should be combined into a real-time scoring model that flags suspicious view activity within hours, not days. Set up automated alerting when any market's engagement metrics deviate more than 3 standard deviations from expected levels.\n\nLong-term — this quarter: Evaluate whether our metrics are \"bot-resistant.\" Metrics like total views are easy to inflate with bots. Metrics like meaningful engagement actions — comments with actual text, shares to real conversations, follows that persist over 30 days — are much harder to fake. I'd recommend the growth team shift their North Star from raw view counts to a quality-weighted engagement metric."},
+      {role:"Interviewer", text:"Should we tell the growth team their celebration was premature?"},
+      {role:"Candidate", text:"Yes, but I'd frame it constructively. The message isn't \"your numbers are fake\" — it's \"we identified a data integrity issue that was inflating the market's metrics. Here are the corrected numbers. The real underlying growth in this market is approximately X%, which is still healthy.\" I'd also use this as a case study internally for why metric literacy matters — specifically, that any engagement metric can be gamed if there's an incentive to do so."},
+    ],
+    debrief: {
+      pattern: "Positive metric movements deserve the same scrutiny as negative ones. Most analysts only investigate when metrics drop — but spikes can indicate manipulation, measurement errors, or unsustainable one-time effects. This case teaches the discipline of questioning ALL anomalies.",
+      skills: [
+        "Distinguishing organic from inauthentic activity using behavioral signals",
+        "Multi-timeframe recommendations (immediate / short-term / long-term)",
+        "Designing bot-resistant metrics",
+        "Stakeholder communication when delivering unwelcome news to a team that's celebrating"
+      ]
+    }
+  },
+  4: {
+    num: 4, section: "metric",
+    company: "Slack", diff: "Medium",
+    title: "Slack's Activation Rate Mystery — The Definition Change Trap",
+    lesson: "Metric definition changes are invisible killers",
+    dialogue: [
+      {role:"Interviewer", text:"You're on Slack's growth analytics team. The enterprise workspace activation rate — defined as the percentage of newly created workspaces that become 'active' within 30 days — dropped from 45% to 34% over two quarters. The CEO is worried. Investigate."},
+      {role:"Candidate", text:"That's a substantial decline. Before investigating behavioral causes, can I ask: has the definition of 'active workspace' changed at all in the past two quarters? Specifically, what criteria define an active workspace?"},
+      {role:"Interviewer", text:"Interesting you ask. Last quarter, the product team updated the definition. Previously, 'active' meant at least 3 members sent at least 1 message each within 30 days. The new definition requires at least 5 members sending at least 10 messages each within 30 days."},
+      {role:"Candidate", text:"There it is. That's likely the primary explanation. The bar for what counts as 'active' just increased significantly — from 3 members with 1 message each to 5 members with 10 messages each. That's a much higher threshold. Workspaces that would have been counted as active under the old definition are now being classified as inactive.\n\nLet me quantify this. I'd recompute the activation rate using the OLD definition on the CURRENT data. If the old-definition activation rate is still around 43-45%, then there's been no actual change in user behavior — the entire drop is a measurement artifact."},
+      {role:"Interviewer", text:"You run the numbers. Under the old definition, the current quarter's activation rate would be 43%. So the definition change explains about 9 of the 11 percentage point drop, but there's still a 2 percentage point real decline. What now?"},
+      {role:"Candidate", text:"Good — so we have two separate issues.\n\nIssue one is the communication problem. Someone needs to tell the CEO that 9 points of the decline are an artifact of the definition change, not a real business deterioration. I'd recommend creating a transition report that shows both metrics side by side for the overlapping period.\n\nIssue two is the real 2 percentage point decline, which I'd now investigate through the activation funnel. For a workspace to become active under the new definition, it needs to clear several hurdles: the workspace creator invites teammates, at least 5 teammates accept and join, and those 5 teammates each send at least 10 messages within 30 days.\n\nI'd measure the conversion rate at each step: what percentage of workspaces get to 5 members? Of those, what percentage have all 5 members send 10+ messages? Where is the funnel leaking?"},
+      {role:"Interviewer", text:"The data shows that the percentage of workspaces reaching 5 members is stable, but the percentage where all 5 members reach 10 messages dropped. What does that tell you?"},
+      {role:"Candidate", text:"That tells me people are joining workspaces but not engaging deeply enough. The problem is at the engagement depth stage, not the invitation or onboarding stage.\n\nWait — actually, I want to ask: does the '10 messages' definition include only channel messages, or also direct messages, huddles, and reactions? If the product has been pushing users toward huddles and DMs, users might be highly engaged but not generating the channel messages that the metric counts."},
+      {role:"Interviewer", text:"Excellent catch. The metric only counts channel messages. Huddle usage has actually grown 40% over the same period."},
+      {role:"Candidate", text:"So this is a second measurement issue layered on top of the first one. Users are shifting their communication from channel messages to huddles, which is a product success — we want people using huddles — but the activation metric is blind to that engagement.\n\nMy recommendation: redefine the activation metric to count 'meaningful interactions' broadly — channel messages, DMs, huddle participation, and file shares. Then recompute the 2-point decline under this broader definition — I'd predict the real decline shrinks to near zero.\n\nMore broadly, this is a lesson for how we build metrics. Any metric that counts a specific action becomes misleading when the product evolves to offer alternative ways to achieve the same goal. Metrics should be tied to outcomes, not actions."},
+    ],
+    debrief: {
+      pattern: "Metric definition changes are the most overlooked cause of metric movements. Always ask 'has the definition changed?' early in your investigation. Additionally, watch for metrics that become stale as the product evolves.",
+      skills: [
+        "Immediately asking about definition changes",
+        "Quantifying the impact of a definition change by recomputing with the old definition",
+        "Identifying when metrics don't evolve with the product",
+        "Recommending outcome-based metrics over action-based metrics"
+      ]
+    }
+  },
+  5: {
+    num: 5, section: "metric",
+    company: "DoorDash", diff: "Medium",
+    title: "DoorDash Delivery Times — A Two-Sided Marketplace Imbalance",
+    lesson: "Marketplace problems require analyzing both sides",
+    dialogue: [
+      {role:"Interviewer", text:"Average delivery time on DoorDash increased from 35 minutes to 43 minutes over the past month. Customer complaints about late deliveries are up 60%. Diagnose this and recommend a fix."},
+      {role:"Candidate", text:"An 8-minute increase in average delivery time is substantial — that's a 23% degradation in a core service quality metric. Let me decompose delivery time into its components.\n\nTotal delivery time is composed of three stages: restaurant prep time — from order placement to food being ready; dispatch and pickup time — from the order being assigned to a Dasher to the Dasher picking up the food; and transit time — from pickup to dropoff at the customer's location.\n\nI'd start by breaking the 8-minute increase across these three stages to see where the bottleneck is."},
+      {role:"Interviewer", text:"The data shows restaurant prep time is stable at about 15 minutes. Dispatch and pickup time increased from 8 minutes to 14 minutes. Transit time increased from 12 minutes to 14 minutes. So dispatch and pickup is the biggest contributor."},
+      {role:"Candidate", text:"The dispatch and pickup stage increasing from 8 to 14 minutes — nearly doubling — is the main driver. This stage is primarily a function of Dasher supply and demand matching. Both time to find an available Dasher and distance from the Dasher to the restaurant increase when there aren't enough Dashers relative to orders — meaning this is likely a supply-demand imbalance.\n\nI'd check: did order volume increase significantly this month? Did Dasher supply decrease?"},
+      {role:"Interviewer", text:"Order volume is up 20% month-over-month — there was a promotional campaign offering free delivery on orders over $15. Active Dasher hours are up only 5%."},
+      {role:"Candidate", text:"That explains it. The promotional campaign successfully drove demand — 20% more orders — but Dasher supply didn't keep pace — only 5% more active hours. The marketplace became undersupplied.\n\nThis is a classic marketplace liquidity problem. Let me think about both short-term and long-term fixes.\n\nShort-term — for the current promotion period: Increase Dasher incentives during peak demand hours to attract more supply. Use dynamic pricing — show slightly higher delivery fees during peak periods even within the promotion. Also, implement a demand throttling mechanism — if a specific zone has a supply-demand ratio below a threshold, show longer estimated delivery times upfront.\n\nMedium-term — for future promotions: Never launch a demand-side promotion without a simultaneous supply-side strategy. Create a 'promotion readiness' checklist that requires the supply team to confirm adequate Dasher coverage before marketing activates a campaign.\n\nLong-term — structural: Build a real-time marketplace health dashboard that monitors the supply-demand ratio by zone and time window, with automated alerts when imbalances form."},
+      {role:"Interviewer", text:"Good analysis. One concern — increasing Dasher incentives to match the demand spike would eat into the economics of the promotion. How do you think about the profitability tradeoff?"},
+      {role:"Candidate", text:"This is the critical question. The promotion is buying growth at a cost — reduced delivery fees on the revenue side, plus increased Dasher incentives on the cost side. The question is whether the customers acquired will generate enough lifetime value to justify the short-term margin hit.\n\nBut here's the key insight: the degraded delivery times are actually undermining the promotion itself. A customer who tries DoorDash for the first time because of free delivery, then waits 43 minutes for cold food, is not going to become a long-term customer.\n\nI'd frame it to leadership this way: spending an extra $X on Dasher incentives to maintain 35-minute delivery times will protect the estimated $Y in customer LTV that the promotion is designed to create. The ROI of the promotion with good delivery times is positive; the ROI with 43-minute delivery times is likely negative because of poor first impressions."},
+    ],
+    debrief: {
+      pattern: "In a marketplace, you must always analyze both sides. A demand-side intervention (promotion) without supply-side planning creates imbalances that degrade the experience for everyone.",
+      skills: [
+        "Breaking a process metric into sequential stages and identifying the bottleneck",
+        "Two-sided marketplace reasoning — supply and demand must be analyzed together",
+        "Connecting operational metrics to economic outcomes (LTV analysis of the promotion)",
+        "Multi-timeframe recommendations with increasing structural depth"
+      ]
+    }
+  },
+  6: {
+    num: 6, section: "metric",
+    company: "Google Ads", diff: "Hard",
+    title: "Google Ads CPC Decline — Ad Auction Economics",
+    lesson: "Understanding auction mechanics matters for ad platform cases",
+    dialogue: [
+      {role:"Interviewer", text:"You're on Google's ads analytics team. Average CPC across Search ads dropped 7% quarter-over-quarter, which reduces revenue. But ad impression volume is up 12%. What's going on?"},
+      {role:"Candidate", text:"So revenue is a function of impressions times CPC. If impressions are up 12% and CPC is down 7%, total revenue would be roughly 1.12 × 0.93 = 1.04, so about 4% total revenue growth. The concern is that CPC is declining.\n\nLet me think about what drives CPC in a search auction. Google uses a generalized second-price auction where CPC is influenced by the competition level — how many advertisers are bidding on a query; the quality score of the ads; and the mix of queries — commercial-intent queries have much higher CPCs than informational queries.\n\nI'd investigate along three dimensions: query mix shift, advertiser behavior, and quality score improvements."},
+      {role:"Interviewer", text:"You investigate and find that the query mix shifted significantly. Mobile voice searches grew 30% quarter-over-quarter, and these searches tend to be more informational with fewer advertisers bidding. CPC within each query category is actually stable. What's your recommendation?"},
+      {role:"Candidate", text:"So this is another mix shift case. The average CPC declined not because advertisers are paying less for the same queries, but because the mix shifted toward queries with naturally lower CPCs.\n\nThis is actually a healthy growth dynamic — Google is handling more searches, which means more total ad revenue even at a lower average CPC.\n\nFirst, for internal reporting, I'd segment CPC by query intent category — high-commercial, mid-commercial, informational — and report each separately.\n\nSecond, for the product team, I'd explore opportunities to better monetize informational and voice searches. These queries currently have lower CPCs because fewer advertisers bid on them, but that's partly because the ad formats aren't well-suited for voice or informational contexts. Developing new ad formats — sponsored knowledge panels, voice-friendly ad experiences — could attract advertiser demand for these growing query types.\n\nThird, I'd monitor whether this trend is accelerating. If voice and informational searches continue growing faster than commercial searches, the long-term CPC trend will continue declining."},
+    ],
+    debrief: {
+      pattern: "Ad platform cases require understanding auction mechanics. CPC is an output of supply (advertiser demand) and demand (user queries), filtered through auction mechanics. A declining CPC can be bad (advertisers leaving), neutral (mix shift), or good (quality improvements reducing costs).",
+      skills: [
+        "Understanding ad auction economics and what drives CPC",
+        "Recognizing mix shift patterns across different business contexts",
+        "Connecting metric movements to product strategy (new ad formats for new query types)",
+        "Distinguishing between metrics that indicate problems versus metrics that reflect healthy growth"
+      ]
+    }
+  },
+  7: {
+    num: 7, section: "metric",
+    company: "Spotify", diff: "Medium",
+    title: "Spotify Premium Conversion Decline",
+    lesson: "Acquisition channel quality drives downstream metrics",
+    dialogue: [
+      {role:"Interviewer", text:"Spotify's free-to-premium conversion rate dropped from 8.2% to 6.5% over two quarters, but total free-tier signups increased 40%. The growth team says it's fine — more total premium subscribers are being added. The finance team is worried about declining unit economics. Who's right?"},
+      {role:"Candidate", text:"Both are partially right. Let me do the math first. Say we had 10 million free users last quarter: 8.2% conversion = 820,000 premium conversions. Now we have 14 million free users: 6.5% conversion = 910,000 premium conversions. So the growth team is correct — total premium subscriber additions increased by about 11%.\n\nBut the finance team's concern is also valid. The conversion rate declined, which could mean the new cohort of free users is lower quality — less likely to ever convert, creating a growing base of free users who consume content and infrastructure but never pay."},
+      {role:"Interviewer", text:"How would you determine which interpretation is correct?"},
+      {role:"Candidate", text:"I'd do a cohort-level analysis by acquisition channel. The 40% growth in free signups had to come from somewhere. I'd break down the signup sources and for each channel, look at volume change and conversion rate.\n\nMy hypothesis is that the 40% signup growth came disproportionately from paid acquisition channels — paid social ads — that attract less intentional users. These users sign up because of an ad or a promotional offer, not because they sought out Spotify. They have weaker intent and therefore lower conversion rates.\n\nIf I find that organic and referral channels still convert at 8-9% while paid social converts at 3-4%, and paid social grew from 20% to 40% of signups, that would fully explain the aggregate conversion decline through mix shift."},
+      {role:"Interviewer", text:"That's exactly what the data shows. Paid campaigns on TikTok and Instagram drove most of the new signups, and those users convert at about 3.5%. Organic users still convert around 8.5%. So what do you recommend?"},
+      {role:"Candidate", text:"Three things.\n\nFirst, reframe the conversation internally. Stop using a single blended conversion rate as the key metric. Report channel-level conversion rates and channel-level CAC-to-LTV ratios instead.\n\nSecond, evaluate whether the paid channels are actually profitable. The question isn't 'do paid users convert at a lower rate' — of course they do. The question is 'does the lifetime value of a paid-acquired premium subscriber exceed the cost of acquiring them?' If each TikTok-sourced signup costs $2.00, and 3.5% convert to premium with an average subscriber LTV of $150, then the cost per premium subscriber is $2.00 / 0.035 = $57, which is well below $150 LTV. That's a profitable channel even at 3.5% conversion.\n\nThird, investigate whether there are levers to improve paid channel conversion specifically. I'd A/B test a customized conversion journey for users acquired through paid channels."},
+      {role:"Interviewer", text:"One more — should we set a floor on acceptable conversion rates for new channels?"},
+      {role:"Candidate", text:"Not a conversion rate floor — a unit economics floor. A channel with 2% conversion rate is fine if the acquisition cost is low enough that the per-premium-subscriber cost is below our LTV threshold. A channel with 10% conversion rate is bad if it costs so much per signup that the per-premium-subscriber cost exceeds LTV.\n\nThe metric I'd set a floor on is: channel-level CAC per premium subscriber divided by estimated LTV. That ratio should stay below, say, 0.5 for us to continue investing in the channel."},
+    ],
+    debrief: {
+      pattern: "Acquisition channel quality is one of the most common drivers of downstream metric changes. Whenever a conversion or engagement metric declines alongside user growth, the first hypothesis should be 'did we add a new channel that brings lower-quality users?'",
+      skills: [
+        "Cohort analysis by acquisition channel",
+        "LTV-to-CAC analysis by channel",
+        "Reframing metrics — blended conversion rate is misleading; unit economics are what matter",
+        "Proposing channel-specific interventions (customized onboarding for paid users)"
+      ]
+    }
+  },
+  8: {
+    num: 8, section: "metric",
+    company: "Airbnb", diff: "Medium",
+    title: "Airbnb Bookings Dropped in One Market",
+    lesson: "Geographic segmentation and external factor analysis",
+    dialogue: [
+      {role:"Interviewer", text:"Airbnb bookings in Barcelona dropped 30% year-over-year while global bookings are up 8%. What's happening?"},
+      {role:"Candidate", text:"A 30% YoY decline in a single major market while the rest of the business grows is almost certainly driven by a market-specific factor — either regulatory, competitive, or event-driven. Let me ask: has Barcelona introduced any new regulations around short-term rentals recently?"},
+      {role:"Interviewer", text:"Yes — Barcelona implemented strict new licensing requirements for short-term rentals about 4 months ago. Only licensed properties can be listed. But I want you to analyze this more broadly — don't just stop at regulation."},
+      {role:"Candidate", text:"Fair enough. Even knowing about the regulation, I should quantify its impact and investigate whether other factors are compounding the decline.\n\nFirst, supply-side analysis. The regulation directly reduces supply. I'd look at how many active listings were in Barcelona before versus now, what percentage of listings were removed due to licensing requirements, and whether remaining listings raised prices due to reduced competition.\n\nSecond, demand-side analysis. Did traveler demand for Barcelona actually decline, or did demand hold steady but travelers couldn't find availability? I'd look at search volume versus booking conversion from those searches. If search volume is stable but conversion dropped, the issue is supply-side. If search volume itself dropped, there may be additional demand-side factors.\n\nThird, competitive displacement. When Airbnb supply decreases in a regulated market, where does the demand go? I'd check whether hotel bookings in Barcelona increased or whether bookings in nearby destinations like Valencia or Lisbon increased."},
+      {role:"Interviewer", text:"The data shows listings dropped 40%, search volume dropped 15%, and search-to-booking conversion dropped from 12% to 8%. How do you put this all together?"},
+      {role:"Candidate", text:"Let me quantify this. Bookings are roughly proportional to search volume times conversion rate times available supply. Fewer people are looking, and those who look are less likely to find and book something because there are fewer options at higher prices. These effects compound.\n\nThe conversion decline is particularly interesting. The remaining 60% of listings are licensed and presumably higher quality, but the reduced variety means travelers are less likely to find the specific type of property they want — the long tail of unique properties was Airbnb's differentiator, and regulation disproportionately eliminates quirky, individual-owner listings.\n\nFor Barcelona specifically: invest in helping existing hosts navigate the licensing process. Many hosts may have delisted not because they can't qualify, but because the application process is complex.\n\nFor the demand side: adjust marketing to set realistic expectations — highlight that Barcelona listings are now all licensed and verified, turning the regulation into a quality signal.\n\nFor the broader business: build a regulatory risk model. Barcelona is not the only market implementing these regulations — use it as a case study to proactively model the impact of future regulations in other markets."},
+    ],
+    debrief: {
+      pattern: "Single-market metric changes are almost always caused by market-specific factors: regulation, competition, local events, or economic conditions. The analytical structure of decomposing into supply-side, demand-side, and competitive displacement is applicable to any marketplace facing a geographic disruption.",
+      skills: [
+        "Geographic isolation — investigating the specific market rather than looking for global explanations",
+        "Supply-demand decomposition for marketplaces",
+        "Turning a regulatory constraint into a product advantage (licensed = verified quality)",
+        "Proactive modeling — using one market's experience to predict impact in similar markets"
+      ]
+    }
+  },
+  9: {
+    num: 9, section: "metric",
+    company: "Amazon", diff: "Medium",
+    title: "Amazon's Add-to-Cart Anomaly",
+    lesson: "Funnel step isolation reveals where the real problem is",
+    dialogue: [
+      {role:"Interviewer", text:"Amazon's add-to-cart rate spiked 18% week-over-week, but purchase conversion from cart is flat, meaning overall purchase volume only increased marginally. The product team expected add-to-cart and purchase to move together. Why didn't they?"},
+      {role:"Candidate", text:"An 18% spike in add-to-cart without a corresponding purchase increase means something is driving users to put items in their cart but NOT to complete the purchase. Let me think about what could cause this decoupling.\n\nHypothesis one: A promotional or comparison-shopping effect. If Amazon launched a promotion — say, an upcoming Prime Day — users might be adding items to their cart as a way to bookmark or track prices rather than with immediate purchase intent.\n\nHypothesis two: A product or UI change that made the add-to-cart action easier or more prominent.\n\nHypothesis three: A checkout friction increase. Maybe a new checkout step or a payment processing issue."},
+      {role:"Interviewer", text:"Let's say the product team recently added a 'Add to Cart' button directly on the search results page, without requiring users to visit the product detail page first."},
+      {role:"Candidate", text:"That explains it perfectly. By putting the add-to-cart button on the search results page, we lowered the friction dramatically. Previously, adding to cart required: search → click product → read details → add to cart (4 steps). Now it's: search → add to cart (2 steps).\n\nBut this also means we removed the consideration step — the product detail page where users read reviews, check specifications, and build purchase conviction. Users are adding to cart earlier in their decision-making process, before they've decided whether they actually want to buy. Many of these 'new' cart additions are tentative.\n\nThe product detail page was serving a crucial role in the purchase funnel — filtering out users who weren't going to buy after seeing the details — and we've now moved that filtering step downstream from add-to-cart."},
+      {role:"Interviewer", text:"So should we remove the search-page add-to-cart button?"},
+      {role:"Candidate", text:"Not necessarily. The key question is: did TOTAL purchases increase, even if cart-to-purchase conversion dropped? If purchases went up even by a few percent, the feature is additive — we just need to stop using cart-to-purchase rate as a health metric for this flow because the add-to-cart action now means something different.\n\nHowever, there's a risk: inflated carts create clutter, abandoned cart emails become less relevant because many cart items were never seriously considered.\n\nMy recommendation: keep the feature but add a lightweight confirmation step — maybe a 'Quick Look' overlay that shows key product info, rating, and price before adding to cart. This preserves the reduced friction while reintroducing a minimal consideration moment that filters out purely exploratory additions."},
+    ],
+    debrief: {
+      pattern: "When a UI change makes an action easier, the VOLUME of that action increases but the QUALITY (measured by downstream conversion) typically decreases. This is predictable and not necessarily bad — the question is whether the total downstream outcome improved.",
+      skills: [
+        "Identifying how a UI change alters the meaning of a user action",
+        "Thinking in funnel absolutes vs. funnel rates",
+        "Evaluating tradeoffs of reduced friction (more volume, lower quality)",
+        "Designing middle-ground solutions (Quick Look overlay) rather than binary ship/revert decisions"
+      ]
+    }
+  },
+  10: {
+    num: 10, section: "metric",
+    company: "Stripe", diff: "Hard",
+    title: "Stripe's Correlated Metrics — Error Rate and Volume Rising Together",
+    lesson: "Correlated metrics may have a causal relationship",
+    dialogue: [
+      {role:"Interviewer", text:"Stripe's API error rate increased from 0.3% to 0.8% over the past two weeks. Simultaneously, total API call volume increased 25%. Are these related? What would you investigate?"},
+      {role:"Candidate", text:"These could be related in three different causal directions.\n\nDirection one — volume is causing errors. Higher API call volume could be overwhelming Stripe's infrastructure, causing capacity-related errors. This is a scaling/infrastructure problem.\n\nDirection two — errors are causing volume. If API calls are failing with retriable errors, clients' retry logic will automatically re-send failed requests. This creates a feedback loop — an initial error causes a retry, which adds more volume, which could cause more errors. The 'real' volume increase might be much smaller than 25%, with retries inflating the number.\n\nDirection three — a common external cause is driving both. For example, a large new merchant onboarding could simultaneously increase call volume and error rate."},
+      {role:"Interviewer", text:"How would you determine which direction is correct?"},
+      {role:"Candidate", text:"For direction one — infrastructure bottleneck — I'd check server metrics: CPU utilization, memory, database connection pool usage, and request latency percentiles. If these show a hockey stick approaching capacity limits that correlates with the error rate increase, it's a scaling issue.\n\nFor direction two — retry amplification — I'd look at the error types. Are they retriable errors like 429 (rate limit) or 503 (service unavailable)? I'd also look at unique API calls (deduplicated by idempotency key) versus total calls. If unique calls increased 10% but total calls increased 25%, the additional 15% is retries.\n\nFor direction three — I'd segment the error rate by merchant. If the error rate increase is concentrated in one or a few merchants, especially newly onboarded ones, the issue is merchant-specific."},
+      {role:"Interviewer", text:"The data shows that 500-level errors increased during peak hours, and retry volume accounts for about 40% of the call volume increase. What do you recommend?"},
+      {role:"Candidate", text:"So it's a combination of directions one and two. Infrastructure is struggling with the organic volume increase, causing 500-level errors, which trigger client retries, which further amplify the load — a vicious cycle.\n\nImmediate actions: Implement or tighten rate limiting to break the retry amplification cycle. Add exponential backoff requirements in Stripe's API error responses — include Retry-After headers telling clients to wait before retrying. Also, scale up infrastructure capacity if possible.\n\nShort-term: Implement load shedding — when the system approaches capacity, proactively reject a small percentage of requests with clear backoff signals rather than attempting to serve all requests and failing unpredictably.\n\nLong-term: Conduct a capacity planning review. If organic volume grew 15% in two weeks and that was enough to trigger capacity issues, we're running too close to our limits. Set a policy to maintain at least 40% headroom above normal peak volume.\n\nFor metrics specifically, I'd recommend decomposing the API error rate dashboard into: organic error rate (excluding retries) and total error rate. The organic rate is the true health metric; the total rate reflects the amplification factor."},
+    ],
+    debrief: {
+      pattern: "When two metrics move together, always ask about the causal direction. Is A causing B? Is B causing A? Or is C causing both? In systems with feedback loops (like retry storms), a small initial problem can amplify into a much larger one.",
+      skills: [
+        "Identifying causal direction between correlated metrics",
+        "Understanding retry amplification and feedback loops in technical systems",
+        "Decomposing observed volume into organic vs. artificial (retry) components",
+        "Multi-timeframe response: break the cycle now, prevent recurrence later"
+      ]
+    }
+  },
+  11: {
+    num: 11, section: "product",
+    company: "Instagram (Meta)", diff: "Medium",
+    title: "Instagram Reels — Defining Success Without Cannibalizing the Core",
+    lesson: "Feature success metrics must include cannibalization monitoring",
+    dialogue: [
+      {role:"Interviewer", text:"You're a data scientist on the Instagram Reels team. Reels launched six months ago. The head of product asks you: 'How should we measure whether Reels is actually successful?' Define the metrics framework."},
+      {role:"Candidate", text:"Before defining metrics, I want to clarify the strategic goal. Instagram launched Reels primarily as a competitive response to TikTok — the goal is to capture short-form video engagement that would otherwise go to a competitor, and to retain younger users who are TikTok's core demographic.\n\nLet me build the framework in layers.\n\nThe North Star metric should be daily Reels watch time per Instagram DAU. I'm choosing this over total Reels views because watch time captures genuine engagement — a view could be a 1-second accidental scroll.\n\nFor secondary metrics, I'd track five things: Reels DAU penetration, Reels creation rate, average Reels completion rate, Reels share rate, and Reels-to-follow conversion.\n\nNow, the critical piece most candidates miss — guardrail metrics. Reels must NOT succeed at the expense of the core Instagram experience.\n\nGuardrail one: Total Instagram time spent per user — should increase or remain stable.\nGuardrail two: Stories daily views — if Stories consumption declines as Reels grows, Reels is cannibalizing a strategically important feature.\nGuardrail three: Feed engagement — likes, comments, saves on non-Reels content.\nGuardrail four: Creator posting diversity."},
+      {role:"Interviewer", text:"Good framework. How would you actually measure whether Reels is cannibalizing Stories versus adding incremental time?"},
+      {role:"Candidate", text:"I'd use two approaches.\n\nFirst, a time displacement analysis. For each user, calculate total Instagram time this month versus six months ago, broken down by surface — Feed time, Stories time, Reels time. If a user's total time increased by 8 minutes and their Reels time is 12 minutes, then Reels displaced about 4 minutes from other surfaces and added 8 minutes net.\n\nSecond, a holdback experiment if it's still possible. Hold back Reels from a small percentage of users and compare their total Instagram engagement to users who have Reels. If the holdback group has 15% lower total time, then Reels is net-additive."},
+      {role:"Interviewer", text:"The holdback experiment is still running. Results show that users WITHOUT Reels spend 7% less total time on Instagram. Users WITH Reels get 20 minutes of daily Reels time but only 7% more total time. What does that tell you?"},
+      {role:"Candidate", text:"This tells me that Reels is net-additive but with significant cannibalization. Let's say average daily Instagram time without Reels is 30 minutes. With Reels, it's 32.1 minutes (7% more). But Reels time is, say, 8 minutes of that 32.1 minutes. That means the other surfaces combined went from 30 minutes to 24.1 minutes — a 20% decline in non-Reels time.\n\nSo Reels added 2.1 minutes of net new time but displaced about 5.9 minutes from other surfaces.\n\nMy recommendation: continue investing in Reels but closely monitor Feed ad revenue per user. The key is to monetize Reels fast enough to offset any Feed revenue dilution. I'd set a target: Reels ad revenue per Reels minute should reach at least 80% of Feed ad revenue per Feed minute within 12 months."},
+    ],
+    debrief: {
+      pattern: "For any new feature within an existing product, always define guardrail metrics that measure cannibalization. The holdback experiment and time displacement analysis are the two primary methods for measuring whether a feature is additive versus substitutive.",
+      skills: [
+        "Building a three-layer metric hierarchy (North Star, secondary, guardrails)",
+        "Designing cannibalization measurements",
+        "Interpreting holdback experiment results quantitatively",
+        "Connecting engagement metrics to revenue implications"
+      ]
+    }
+  },
+  12: {
+    num: 12, section: "product",
+    company: "LinkedIn", diff: "Hard",
+    title: "LinkedIn Short-Form Video — Build or Don't Build?",
+    lesson: "Strategic product evaluation requires understanding competitive positioning",
+    dialogue: [
+      {role:"Interviewer", text:"LinkedIn is considering launching a TikTok-style short-form video feature for professional content. The VP of Product wants your analysis — should we build this?"},
+      {role:"Candidate", text:"This is a major strategic decision, so I want to think about it from multiple angles using a PRO-CON-MEASURE framework.\n\nThe case FOR building: LinkedIn's core challenge is engagement depth. Short-form video could increase daily time spent, increasing ad impression inventory and ad revenue. Professional content in video format is underserved — there's no dominant platform for short professional content. LinkedIn could own the 'professional short-form' niche.\n\nThe case AGAINST: LinkedIn's user base is not habitual — users visit a few times per week, not daily. Short-form video requires daily habit formation to work. The content creator base on LinkedIn is primarily text-oriented — asking professional users to create video content is a much higher bar. There's also a cultural mismatch risk — short-form video is associated with casual, entertaining content, while LinkedIn's brand is professional and serious."},
+      {role:"Interviewer", text:"Those are good arguments on both sides. Where do you land?"},
+      {role:"Candidate", text:"I'd recommend a modified build — not a TikTok-style scrollable video feed, but an integrated video format that fits LinkedIn's existing product.\n\nInstead of a separate video tab with a full-screen vertical scroll experience, I'd recommend enabling short-form video as a post format within the existing LinkedIn Feed. Users can create and consume 30-90 second professional videos — career advice, industry insights, workplace tips — within the same Feed they already browse.\n\nThis approach doesn't require users to develop a new consumption habit, lowers the content creation bar through professional templates and guided formats, preserves the LinkedIn brand, and requires significantly less engineering investment than building an entirely new video product."},
+      {role:"Interviewer", text:"How would you measure success for this approach?"},
+      {role:"Candidate", text:"North Star: Weekly video views per LinkedIn WAU. I'm using weekly, not daily, because LinkedIn's natural frequency is weekly for many users.\n\nSecondary metrics: Video creation rate per 10,000 WAU, average video watch percentage, video-driven profile visits and connection requests, and time spent in Feed on video days versus non-video days.\n\nGuardrails: Feed engagement on non-video content shouldn't decline by more than 5%. Job application volume and recruiter InMail response rates shouldn't decline. Premium subscription conversion shouldn't decline.\n\nI'd launch as a 3-month beta in one English-speaking market, invite 10,000 existing text-content creators to try video with white-glove support, and evaluate before deciding on broader rollout."},
+    ],
+    debrief: {
+      pattern: "'Should we build X?' questions don't have to end with 'yes' or 'no.' The strongest answers propose a modified version that captures the upside while mitigating the risks.",
+      skills: [
+        "Evaluating product decisions through strategic fit, not just engagement potential",
+        "Proposing creative alternatives to the binary build/don't-build decision",
+        "Designing metrics frameworks that match the product's natural usage cadence",
+        "Understanding that not every engagement feature suits every product"
+      ]
+    }
+  },
+  13: {
+    num: 13, section: "product",
+    company: "Notion", diff: "Hard",
+    title: "Notion AI — Measuring Success for an AI Feature",
+    lesson: "AI features require fundamentally different success metrics",
+    dialogue: [
+      {role:"Interviewer", text:"Notion launched Notion AI — an AI writing assistant embedded in the product. How would you measure whether it's successful? The challenge is that traditional engagement metrics might mislead us."},
+      {role:"Candidate", text:"You're right that this is tricky. The fundamental problem with applying traditional engagement metrics to an AI assistant is that the best AI tool might actually REDUCE time spent in the product. If Notion AI helps me write a document in 10 minutes that previously took 30 minutes, time spent goes down — but the product is delivering MORE value, not less.\n\nMy North Star would be AI-influenced retention. Specifically, I'd compare 90-day retention between users who regularly use Notion AI versus matched users who don't. If AI users retain at significantly higher rates, the feature is creating stickiness.\n\nFor secondary metrics, I'd track: AI adoption rate, AI task completion rate (measured through implicit signals — did the user accept the AI output, edit it slightly, or immediately undo it?), AI-driven workspace expansion, conversion impact for free users, and time-to-value for new users."},
+      {role:"Interviewer", text:"How would you handle the fact that you can't easily A/B test Notion AI — it's a core feature that all users have access to?"},
+      {role:"Candidate", text:"I'd use several complementary approaches.\n\nFirst, natural experiment analysis. Not all users adopt AI at the same rate. I'd compare outcomes between AI adopters and non-adopters, using propensity score matching to address selection bias — build a model predicting AI adoption based on pre-launch behaviors, match adopters to non-adopters with similar propensity scores, and compare retention between matched pairs.\n\nSecond, dosage analysis. Among AI users, is there a dose-response relationship? Do users who use AI 10 times per week retain better than those who use it 3 times per week?\n\nThird, if Notion is launching AI in new markets sequentially, I can use the staggered rollout as a natural experiment — using a difference-in-differences approach.\n\nFourth, for the most rigorous measurement, I'd advocate for a small holdback test — withhold AI access from 2% of new users for 90 days."},
+    ],
+    debrief: {
+      pattern: "AI features break traditional engagement metrics. More value can mean LESS time spent. The right metrics focus on outcomes (retention, expansion, task completion) rather than inputs (time spent, sessions).",
+      skills: [
+        "Recognizing when standard metrics mislead for a specific product type",
+        "Designing AI-specific success metrics centered on task completion and retention",
+        "Using propensity score matching and natural experiments when A/B tests aren't possible",
+        "Thinking about selection bias in feature adoption analysis"
+      ]
+    }
+  },
+  14: {
+    num: 14, section: "product",
+    company: "YouTube", diff: "Medium",
+    title: "YouTube Creator Features — Prioritization Under Constraints",
+    lesson: "Prioritization frameworks with limited resources",
+    dialogue: [
+      {role:"Interviewer", text:"YouTube wants to invest in creator tools to improve creator retention and content quality. Engineering capacity allows building only 2 of these 4 features this quarter. Which two would you prioritize?\n\nFeature A: Advanced analytics dashboard\nFeature B: AI-powered video editing tool\nFeature C: Collaboration tools\nFeature D: Monetization transparency dashboard"},
+      {role:"Candidate", text:"I'd evaluate each feature on three criteria: expected impact on creator retention, reach across the creator base, and feasibility.\n\nFeature A — Advanced analytics: Useful for established creators but not for small creators — who are the majority. The impact on creator retention is moderate. I'd rank this third.\n\nFeature B — AI video editing: Directly addresses the biggest barrier to content creation — editing is time-consuming and requires technical skill. High reach — it helps both new creators who lack editing skills and established creators who want to produce more efficiently. The impact on creator retention is high because it reduces the work required to maintain a consistent upload schedule, which is the primary driver of creator burnout. I'd rank this first.\n\nFeature C — Collaboration tools: Impact is moderate and the reach is limited to creators who are already networked enough to find collaboration partners. I'd rank this fourth.\n\nFeature D — Monetization transparency: Lack of monetization transparency is one of the top creator complaints across ALL platforms. A transparency dashboard could significantly improve creator trust and reduce platform-switching intent. I'd rank this second.\n\nMy recommendation: build Features B and D. B helps grow the creator supply; D helps retain the top of the supply. Strategically complementary."},
+      {role:"Interviewer", text:"How would you measure whether this prioritization was correct after launch?"},
+      {role:"Candidate", text:"For Feature B, I'd measure: creator upload frequency (did creators who use the AI tool post more frequently?), creator retention at 90 days, and Shorts creation rate from long-form creators.\n\nFor Feature D, I'd measure: creator satisfaction score specifically around revenue understanding, creator platform-exclusive rate, and support ticket volume related to monetization questions — this should decline.\n\nIf Feature B's impact on upload frequency is less than 10%, I'd reconsider whether the editing friction hypothesis was correct. If Feature D doesn't improve creator satisfaction scores, maybe creators want higher payouts, not more transparency — the problem might be the amount, not the clarity."},
+    ],
+    debrief: {
+      pattern: "Prioritization cases require a scoring framework and clear articulation of why you're choosing certain features over others. The strongest answers explain the strategic complementarity of the chosen combination.",
+      skills: [
+        "Structured prioritization with explicit criteria",
+        "Evaluating features on impact, reach, and strategic value",
+        "Defining success metrics for each prioritized feature",
+        "Articulating what evidence would cause you to revise your prioritization"
+      ]
+    }
+  },
+  15: {
+    num: 15, section: "product",
+    company: "Twitter/X", diff: "Medium",
+    title: "Twitter Fleets Post-Mortem — Why a Feature Failed",
+    lesson: "Post-mortem analysis and kill criteria",
+    dialogue: [
+      {role:"Interviewer", text:"Twitter launched Fleets — disappearing stories similar to Instagram Stories and Snapchat Stories — and then killed the feature about 8 months later. You're tasked with writing the data-driven post-mortem. What happened, and what should Twitter learn from this?"},
+      {role:"Candidate", text:"Let me structure the analysis around three questions: What did the data likely show that led to the kill decision? Why didn't the feature succeed? And what should Twitter learn?\n\nFor the first question, I'd hypothesize that Fleets was killed because of three data signals: low sustained adoption — weekly active Fleet creators peaked at maybe 3-5% of Twitter's DAU and then declined below 1%; no incremental engagement — total engagement didn't increase for users who tried Fleets; and creator substitution — some users posted content as Fleets that they would have otherwise posted as tweets, reducing the value of each piece of content."},
+      {role:"Interviewer", text:"Tell me WHY you think Fleets failed structurally."},
+      {role:"Candidate", text:"The fundamental problem was that Fleets solved a problem that didn't really exist on Twitter.\n\nOn Instagram, Stories succeeded because Instagram's main feed was curated and polished — users felt pressure to only post 'worthy' content to their permanent grid. Stories gave them a low-pressure outlet for casual content.\n\nBut Twitter's core product is ALREADY low-pressure and ephemeral. Tweets are short, casual, and rapidly scroll past. Users don't feel the same 'performance pressure' on Twitter that they do on Instagram. So the core value proposition of Fleets — 'share without the pressure of a permanent post' — was redundant with what tweets already offered.\n\nAdditionally, Twitter's distribution model didn't support Fleets. Without enough creators posting Fleets, viewers had sparse content. Without viewers, creators had no audience. It was a supply-side chicken-and-egg problem."},
+      {role:"Interviewer", text:"What should Twitter learn for future feature launches?"},
+      {role:"Candidate", text:"Three lessons.\n\nFirst, validate the user need before building the solution. The question should have been: 'Do Twitter users actually feel that posting is too high-stakes?' If they surveyed users and the answer was 'no,' that should have killed the project pre-development.\n\nSecond, set kill criteria in advance. Before launching Fleets, the team should have defined: 'If weekly active Fleet creators don't reach X% of DAU by month 3, we will kill the feature.' Pre-committing to kill criteria prevents the sunk cost fallacy.\n\nThird, not every feature that works on another platform will work on yours. 'Instagram has Stories, so we need Stories' is competitor-driven product thinking, not user-driven. The right question is always 'what do OUR users need?'\n\nFor kill criteria specifically, I'd recommend a 30/60/90 day ladder: at day 30, check adoption rate; at day 60, check retention; at day 90, check incremental value."},
+    ],
+    debrief: {
+      pattern: "Feature post-mortems are as valuable as launches. The key insight is that importing a feature from a different product fails when the underlying user need is different. Also, pre-defining kill criteria prevents emotional decision-making.",
+      skills: [
+        "Post-mortem analysis structure: What happened → Why it happened → What to learn",
+        "Understanding that features are solutions to problems — if the problem doesn't exist, the solution won't work",
+        "Designing kill criteria with staged checkpoints",
+        "Distinguishing competitor-driven from user-driven product development"
+      ]
+    }
+  },
+  16: {
+    num: 16, section: "product",
+    company: "Uber", diff: "Medium",
+    title: "Uber Safety Metrics — When the Goal Isn't Engagement",
+    lesson: "Not all products optimize for engagement — safety metrics require different thinking",
+    dialogue: [
+      {role:"Interviewer", text:"You're on Uber's trust and safety team. Design a comprehensive safety metrics framework for the rider experience. Remember, the goal here isn't to maximize engagement."},
+      {role:"Candidate", text:"Absolutely — safety metrics are fundamentally different from engagement metrics. With engagement, more is better. With safety, the goal is to minimize bad outcomes while not creating so much friction that the product becomes unusable. It's an asymmetric optimization problem.\n\nLet me structure this in three tiers.\n\nTier one — incident metrics: Safety incidents per million trips (segmented by severity), incident resolution time, and false report rate.\n\nTier two — preventive metrics: Safety feature adoption rate (what percentage of riders have emergency contacts set up?), real-time trip monitoring intervention rate, driver safety score distribution, and deplatforming rate for safety violations.\n\nTier three — perception metrics: Rider safety confidence score (post-trip survey), safety-attributed churn, and safety feature awareness."},
+      {role:"Interviewer", text:"How would you handle the tension between safety and rider experience? For example, more safety checks mean more friction."},
+      {role:"Candidate", text:"This is the core tension. I'd approach this with risk-stratified friction. Instead of applying safety checks uniformly, apply more friction to higher-risk situations and less to lower-risk ones.\n\nHigh-risk signals include: trip at night in a low-density area, new rider on the platform, first trip with this particular driver, driver with a safety score in the bottom quartile. For these trips, apply PIN verification, send a pre-trip safety checklist, and enable proactive trip monitoring.\n\nLow-risk signals: daytime trip in a familiar area, rider has 100+ trips, driver with an excellent safety score. For these, minimize friction — no PIN required, standard monitoring.\n\nThe metric to track is: safety incident rate relative to friction level. We want to find the minimum friction that maintains the target incident rate. I'd A/B test different friction levels for different risk tiers."},
+    ],
+    debrief: {
+      pattern: "Safety and trust metrics require fundamentally different thinking from engagement metrics. The goal is minimizing negatives (incidents), not maximizing positives (engagement). Risk-stratified friction is the key design principle.",
+      skills: [
+        "Designing metrics for non-engagement objectives",
+        "Three-tier safety framework: incidents, prevention, perception",
+        "Risk stratification to balance safety with user experience",
+        "Understanding asymmetric optimization — a missed safety incident is far more costly than unnecessary friction"
+      ]
+    }
+  },
+  17: {
+    num: 17, section: "product",
+    company: "Pinterest", diff: "Hard",
+    title: "Pinterest E-Commerce Checkout — Evaluating a Strategic Pivot",
+    lesson: "Strategic product evaluation for platform-level decisions",
+    dialogue: [
+      {role:"Interviewer", text:"Pinterest is considering adding native checkout — allowing users to buy products directly within Pinterest rather than being redirected to retailer websites. This is a major strategic move. What's your analysis?"},
+      {role:"Candidate", text:"This is a platform strategy question, not just a feature evaluation. Adding native checkout would fundamentally change Pinterest's business model from an advertising platform to a commerce platform.\n\nThe case for native checkout: Pinterest's core use case is discovery — users browse, save, and plan around products. But the purchase conversion is broken because clicking a product pin takes you to a retailer's website, where you encounter a different UI, need to create a new account, and often get distracted. Native checkout would eliminate this friction.\n\nThe case against: First, business model conflict — Pinterest currently earns revenue by sending traffic to retailers through ads. If users buy within Pinterest, retailers get less traffic, reducing the value of Pinterest ads. Second, operational complexity — checkout requires payment processing, fraud prevention, return handling, and customer service. Third, retailer resistance — retailers may not want Pinterest to own the customer relationship."},
+      {role:"Interviewer", text:"What would you recommend?"},
+      {role:"Candidate", text:"I'd propose a phased approach.\n\nPhase 1 — Partner checkout (months 1-6): Enable checkout for a small number of partner retailers who opt in. Pinterest hosts the checkout UI but the transaction is processed by the retailer. This tests user demand without the full operational burden.\n\nPhase 2 — Evaluate economics (months 6-12): Measure whether checkout users generate more total revenue per user than non-checkout users, accounting for both checkout commissions and any decline in ad engagement.\n\nPhase 3 — Full native checkout (months 12-24): Only if Phase 2 shows strong unit economics.\n\nThe metrics I'd track: checkout conversion rate from product pin, revenue per user for checkout-enabled versus non-enabled categories, retailer participation rate and sentiment, ad revenue per user trend to detect cannibalization, and return and complaint rates."},
+    ],
+    debrief: {
+      pattern: "Major strategic decisions should be evaluated as phased bets, not binary yes/no choices. Platform business model changes affect multiple stakeholders (users, advertisers, retailers) — you must analyze the impact on each.",
+      skills: [
+        "Evaluating platform strategy decisions with multi-stakeholder analysis",
+        "Identifying business model conflicts early",
+        "Designing phased rollouts that generate data before committing fully",
+        "Understanding the difference between user value and business model fit"
+      ]
+    }
+  },
+};
+
+let currentCase = null;
+let currentFilter = { diff: 'all', section: 'all' };
+
+function showCase(num) {
+  const c = cases[num];
+  if (!c) return;
+
+  currentCase = num;
+
+  document.getElementById('welcomeScreen').style.display = 'none';
+
+  document.querySelectorAll('.case-item').forEach(el => el.classList.remove('active'));
+  const items = document.querySelectorAll(`.case-item[data-case="${num}"]`);
+  items.forEach(el => el.classList.add('active'));
+
+  const diffClass = c.diff.toLowerCase();
+
+  let dialogueHTML = '';
+  c.dialogue.forEach(turn => {
+    const isCandidate = turn.role === 'Candidate';
+    dialogueHTML += `
+      <div class="turn">
+        <div class="turn-role">
+          <span class="role-label role-${isCandidate ? 'candidate' : 'interviewer'}">${turn.role}</span>
+        </div>
+        <div class="turn-body ${isCandidate ? 'candidate' : ''}">${turn.text.replace(/\n\n/g, '</p><p>').replace(/\n/g, '<br>')}</div>
+      </div>
+    `;
+  });
+
+  let skillsHTML = c.debrief.skills.map(s => `<div class="skill-item">${s}</div>`).join('');
+
+  const allCaseNums = Object.keys(cases).map(Number).sort((a,b) => a-b);
+  const idx = allCaseNums.indexOf(num);
+  const prevNum = idx > 0 ? allCaseNums[idx - 1] : null;
+  const nextNum = idx < allCaseNums.length - 1 ? allCaseNums[idx + 1] : null;
+
+  const html = `
+    <div class="case-view visible">
+      <div class="case-header">
+        <div class="case-number-big">CASE ${String(num).padStart(2,'0')} · ${c.section.toUpperCase()}</div>
+        <div class="case-title-big">${c.title}</div>
+        <div class="case-badges">
+          <span class="badge company">${c.company}</span>
+          <span class="badge diff-badge diff-${diffClass}">${c.diff}</span>
+          <span class="badge key-lesson">Key Lesson: ${c.lesson}</span>
+        </div>
+      </div>
+      <div class="dialogue">${dialogueHTML}</div>
+      <div class="debrief">
+        <div class="debrief-title">Debrief</div>
+        <p><strong>Key Pattern:</strong> ${c.debrief.pattern}</p>
+        <p><strong>Transferable Skills:</strong></p>
+        <div class="skills-list">${skillsHTML}</div>
+      </div>
+      <div class="case-nav">
+        <button class="nav-btn" onclick="${prevNum ? `showCase(${prevNum})` : ''}" ${!prevNum ? 'disabled' : ''}>
+          ← Case ${prevNum ? String(prevNum).padStart(2,'0') : ''}
+        </button>
+        <button class="nav-btn" onclick="${nextNum ? `showCase(${nextNum})` : ''}" ${!nextNum ? 'disabled' : ''}>
+          Case ${nextNum ? String(nextNum).padStart(2,'0') : ''} →
+        </button>
+      </div>
+    </div>
+  `;
+
+  document.getElementById('caseContainer').innerHTML = html;
+  document.getElementById('contentPanel').scrollTo(0, 0);
+}
+
+function filterDiff(diff, el) {
+  currentFilter.diff = diff;
+  document.querySelectorAll('.tpill').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+  applyFilters();
+}
+
+function filterSection(section, el) {
+  currentFilter.section = section;
+  document.querySelectorAll('.sfpill').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+
+  // Hide coming-soon blocks when a specific active section is selected
+  document.querySelectorAll('.coming-soon-group').forEach(group => {
+    group.style.display = (section === 'all') ? 'block' : 'none';
+  });
+
+  applyFilters();
+}
+
+function applyFilters() {
+  document.querySelectorAll('.case-item').forEach(item => {
+    const diff = item.dataset.diff;
+    const sec = item.dataset.section;
+    const diffMatch = currentFilter.diff === 'all' || diff === currentFilter.diff;
+    const secMatch = currentFilter.section === 'all' || sec === currentFilter.section;
+    item.classList.toggle('hidden', !(diffMatch && secMatch));
+  });
+
+  document.querySelectorAll('.section-group').forEach(group => {
+    const sec = group.dataset.section;
+    const secMatch = currentFilter.section === 'all' || sec === currentFilter.section;
+    const visibleItems = group.querySelectorAll('.case-item:not(.hidden)');
+    group.classList.toggle('hidden', !secMatch || visibleItems.length === 0);
+  });
+}
+
+function doSearch(query) {
+  const q = query.toLowerCase().trim();
+  document.querySelectorAll('.case-item').forEach(item => {
+    const num = parseInt(item.dataset.case);
+    const c = cases[num];
+    if (!c) return;
+    const searchable = `${c.title} ${c.company} ${c.lesson} ${c.section}`.toLowerCase();
+    const match = !q || searchable.includes(q);
+    item.classList.toggle('hidden', !match);
+  });
+
+  document.querySelectorAll('.section-group').forEach(group => {
+    const visibleItems = group.querySelectorAll('.case-item:not(.hidden)');
+    group.classList.toggle('hidden', visibleItems.length === 0);
+  });
+}
+</script>
+</body>
+</html>
