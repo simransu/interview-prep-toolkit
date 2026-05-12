@@ -4,3 +4,6 @@ node_modules/
 *.log
 dist/
 .next/
+
+# Private prompts — not for public sharing
+02-case-interview-casebook/casebook-html-conversion-prompt.md
